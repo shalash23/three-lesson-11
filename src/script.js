@@ -44,6 +44,7 @@ const sizes = {
 // const material = new THREE.MeshMatcapMaterial({ matcap: matcapsTexture });
 // const material = new THREE.MeshToonMaterial();
 const material = new THREE.MeshStandardMaterial({
+  map: ambientTexture,
   metalness: 0.45,
   roughness: 0.45,
 });
@@ -61,13 +62,29 @@ const plane = new THREE.Mesh(
   material
 );
 plane.position.x = 2;
+plane.geometry.setAttribute(
+  "uv2",
+  new THREE.BufferAttribute(plane.geometry.attributes.uv.array)
+);
+
+sphere.geometry.setAttribute(
+  "uv2",
+  new THREE.BufferAttribute(sphere.geometry.attributes.uv.array)
+);
 
 const torus = new THREE.Mesh(
   new THREE.TorusBufferGeometry(0.5, 0.2, 16, 32),
   material
 );
+torus.geometry.setAttribute(
+  "uv2",
+  new THREE.BufferAttribute(torus.geometry.attributes.uv.array)
+);
 torus.position.x = -2;
 scene.add(torus, sphere, plane);
+material.map = doorAlphaTexture;
+
+gui.add(material, "adMapIntensity", 1, 3, 0.1);
 
 /**
  * Lights
