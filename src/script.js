@@ -1,12 +1,19 @@
 import "./style.css";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import * as dat from "dat.gui";
 
 /**
  * Base
  */
 // Canvas
 const canvas = document.querySelector("canvas.webgl");
+
+/**
+ * GUI Debug
+ */
+
+const gui = new dat.GUI();
 
 // Scene
 const scene = new THREE.Scene();
@@ -21,8 +28,8 @@ const ambientTexture = textureLoader.load(
   "/textures/door/ambientOcclusion.jpg"
 );
 const normalTexture = textureLoader.load("/textures/door/normal.jpg");
-const matcapsTexture = textureLoader.load("textures/matcaps/1.png");
-const gradientsTexture = textureLoader.load("textures/matcaps/3.png");
+const matcapsTexture = textureLoader.load("textures/matcaps/8.png");
+const gradientsTexture = textureLoader.load("textures/gradients/3.png");
 
 /**
  * Sizes
@@ -34,7 +41,16 @@ const sizes = {
 
 // Objects
 
-const material = new THREE.MeshNormalMaterial({});
+// const material = new THREE.MeshMatcapMaterial({ matcap: matcapsTexture });
+// const material = new THREE.MeshToonMaterial();
+const material = new THREE.MeshStandardMaterial({
+  metalness: 0.45,
+  roughness: 0.45,
+});
+
+gui.add(material, "metalness").min(0).max(1).step(0.01);
+gui.add(material, "roughness").min(0).max(1).step(0.01);
+
 material.side = THREE.DoubleSide;
 const sphere = new THREE.Mesh(
   new THREE.SphereBufferGeometry(0.5, 16, 16),
@@ -52,6 +68,16 @@ const torus = new THREE.Mesh(
 );
 torus.position.x = -2;
 scene.add(torus, sphere, plane);
+
+/**
+ * Lights
+ */
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+const pointLight = new THREE.PointLight(0xffffff, 0.5);
+pointLight.position.x = 2;
+pointLight.position.y = 3;
+pointLight.position.z = 4;
+scene.add(ambientLight, pointLight);
 
 window.addEventListener("resize", () => {
   // Update sizes
